@@ -111,8 +111,10 @@ export function renderScene(ctx: RendererContext, vm: ViewModel): void {
       const sw = t.width * scaleX;
       const sh = t.height * scaleY;
       const radius = Math.min(sw, sh) * 0.5;
+      // Dimmed player color so the trail reads as a darker echo behind the player.
+      const trailDim = 0.6;
       const c = PALETTE.player;
-      batcher.push(sx, sy, sw, sh, c[0], c[1], c[2], 1.0, radius, KIND.trail, 0, t.alpha, 0);
+      batcher.push(sx, sy, sw, sh, c[0] * trailDim, c[1] * trailDim, c[2] * trailDim, 1.0, radius, KIND.trail, 0, t.alpha, 0);
     }
   }
 

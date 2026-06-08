@@ -11,6 +11,11 @@ export function buildVisualPlayer(state: GameState, fx: FxState): VisualRect {
   sx *= 1 + 0.28 * fx.squashImpulse;
   sy *= 1 - 0.22 * fx.squashImpulse;
 
+  // Never let the drawn silhouette grow wider than the real collision box, so
+  // what you see is at most what collides when lining up a landing. Vertical
+  // stretch is kept since the rect is bottom-anchored and only grows upward.
+  sx = Math.min(sx, 1);
+
   const width = p.width * sx;
   const height = p.height * sy;
 

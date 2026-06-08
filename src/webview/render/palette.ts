@@ -18,10 +18,10 @@ export const PALETTE = {
 } as const;
 
 export const GLOW = {
-  normal: 1.1,
+  normal: 1.3,
   movingTrack: 0.6,
   moving: 1.3,
-  player: 1.3,
+  player: 1.0,
   fragile3: 1.3,
   fragile2: 1.3,
   fragile1: 1.3
@@ -31,7 +31,7 @@ export const WHITE = {
   normal: 0,
   movingTrack: 0,
   moving: 0,
-  player: 0.4,
+  player: 0,
   fragile3: 0,
   fragile2: 0,
   fragile1: 0

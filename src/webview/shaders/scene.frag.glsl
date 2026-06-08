@@ -37,11 +37,23 @@ void main() {
   // with alpha blending toward black so each entity carves a readable dark
   // outline out of whatever bright background sits behind it. ---
   if (u_mode > 0.5) {
-    float backing = smoothstep(5.0 + aa, -aa, d);
-    float a = backing * 0.42;
-    if (kind > 3.5) {
+    float a;
+    if (kind < 2.5) {
+      // platforms: a wide, soft dark pocket dims the sun (and its local bloom)
+      // in a generous region around the body so the neon reads over it.
+      float core = smoothstep(6.0 + aa, -aa, d);
+      float halo = exp(-max(d, 0.0) * 0.07);
+      a = max(core, halo * 0.85) * 0.72;
+    } else if (kind > 2.5 && kind < 3.5) {
+      // player: same idea, slightly tighter falloff.
+      float core = smoothstep(6.0 + aa, -aa, d);
+      float halo = exp(-max(d, 0.0) * 0.09);
+      a = max(core, halo * 0.8) * 0.62;
+    } else if (kind > 3.5) {
       // particles (4) / trail (5): fade with aux, lighter backing
-      a = backing * 0.22 * aux;
+      a = smoothstep(5.0 + aa, -aa, d) * 0.22 * aux;
+    } else {
+      a = smoothstep(5.0 + aa, -aa, d) * 0.42;
     }
     fragColor = vec4(0.0, 0.0, 0.0, a);
     return;
@@ -66,7 +78,12 @@ void main() {
   // White-hot core; per-element amount (0 = colored center, 1 = white center).
   e += vec3(1.0) * smoothstep(1.0, -5.0, d) * v_white;
 
-  if (kind > 0.5 && kind < 1.5) {
+  if (kind < 0.5) {
+    // normal platforms: brighter, more saturated fill plus a crisp cyan outline
+    // so they punch through the residual sun behind them.
+    e += col * body * 0.25;
+    e += vec3(1.0) * edge * 0.3;
+  } else if (kind > 0.5 && kind < 1.5) {
     // fragile: flicker more as damage rises, add crack noise
     float dmg = aux;
     float fl = 0.72 + 0.28 * sin(u_time * 30.0 + seed * 12.0);
@@ -78,8 +95,16 @@ void main() {
     float stripes = 0.5 + 0.5 * sin(v_local.x * 0.45 - u_time * 4.5);
     e += col * body * stripes * 0.3;
   } else if (kind > 2.5 && kind < 3.5) {
-    // player: bright crisp white edge ring so its outline always reads
-    e += vec3(1.0) * edge * 0.9;
+    // Player: a solid, crisply-outlined shape with only a tight contained glow.
+    // Sharp silhouette = readable hitbox; full-brightness body stays visible over
+    // the sun; no soft neon edge/aura, so it does not bloom like the platforms.
+    float fill = smoothstep(aa, -aa, d);                  // crisp filled interior
+    float ring = smoothstep(1.6 + aa, 1.6 - aa, abs(d));  // ~3px outline on the edge
+    float glow = exp(-max(d, 0.0) * 0.28) * outside;      // tight, contained halo
+    e = col * fill;                                       // solid full-brightness body
+    e += col * 0.18 * smoothstep(0.0, -10.0, d);          // subtle inner brightening
+    e += vec3(1.0) * ring * 0.85;                         // crisp white outline
+    e += col * glow * 0.3;                                // small glow, low bloom
   } else if (kind > 3.5) {
     // particle (4) or trail (5): fade by aux
     e *= aux;
