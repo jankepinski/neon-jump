@@ -1,0 +1,56 @@
+{
+  "name": "neon-jump",
+  "displayName": "Neon Jump",
+  "description": "A neon-cyberpunk vertical jumping game for VS Code and Cursor, rendered with a hand-written WebGL2 pipeline.",
+  "version": "0.1.0",
+  "publisher": "jankepinski",
+  "license": "MIT",
+  "author": {
+    "name": "Jan Kepinski"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "keywords": [
+    "game",
+    "arcade",
+    "neon",
+    "synthwave",
+    "webgl2"
+  ],
+  "galleryBanner": {
+    "color": "#02010a",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jankepinski/neon-jump.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jankepinski/neon-jump/issues"
+  },
+  "homepage": "https://github.com/jankepinski/neon-jump#readme",
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "neonJump.start",
+        "title": "Start",
+        "category": "Neon Jump"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^6.0.3"
+  }
+}

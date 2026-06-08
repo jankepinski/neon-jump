@@ -1,0 +1,291 @@
+:root {
+  --neon-cyan: #46e6ff;
+  --neon-magenta: #ff3bd4;
+  --neon-violet: #b07cff;
+  --ink: #02010a;
+  --font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--ink);
+  color: #eaf6ff;
+  font-family: var(--font-mono);
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #0a0720 0%, #02010a 70%);
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+#stage {
+  position: relative;
+  aspect-ratio: 480 / 720;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(70, 230, 255, 0.25),
+    0 0 40px rgba(176, 124, 255, 0.25),
+    0 0 120px rgba(255, 59, 212, 0.12);
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  background: #02010a;
+}
+
+/* Neon border + subtle vignette frame above the canvas. */
+#frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1px rgba(120, 240, 255, 0.18),
+    inset 0 0 60px rgba(5, 2, 20, 0.6),
+    inset 0 0 140px rgba(2, 1, 10, 0.7);
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+/* Center panels */
+#center {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+#overlay[data-mode="ready"] #center {
+  align-items: start;
+  padding-top: 50%;
+}
+
+#overlay[data-mode="gameOver"] #center {
+  align-items: start;
+  padding-top: 50%;
+}
+
+/* Press-space prompt (and start-screen instructions) pinned near the bottom. */
+.panel-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 25%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Nudge the game-over score just slightly lower under the title. */
+#overlay[data-mode="gameOver"] #result {
+  margin-top: 6px;
+}
+
+/* Game-over restart prompt sits a bit lower than the start-screen prompt. */
+#overlay[data-mode="gameOver"] .panel-bottom {
+  bottom: 20%;
+}
+
+/* Game-over results */
+#result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 2px 0;
+}
+
+.result-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 28px;
+  letter-spacing: 0.16em;
+}
+
+/* Labels share the GAME OVER title styling, just smaller and colored. */
+.result-label {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+.result-row.score .result-label {
+  color: #eafaff;
+  text-shadow:
+    0 0 10px rgba(70, 230, 255, 0.9),
+    0 0 30px rgba(70, 230, 255, 0.55),
+    0 0 70px rgba(40, 140, 255, 0.4);
+}
+
+.result-row.best .result-label {
+  color: #eafff0;
+  text-shadow:
+    0 0 10px rgba(80, 255, 150, 0.9),
+    0 0 30px rgba(80, 255, 150, 0.55),
+    0 0 70px rgba(0, 220, 120, 0.4);
+}
+
+.result-value {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #eaf6ff;
+  text-shadow:
+    0 0 6px rgba(70, 230, 255, 0.9),
+    0 0 18px rgba(70, 230, 255, 0.55);
+}
+
+/* Highlight when the run set a new best. */
+#result.record .result-value {
+  color: #fffbe8;
+  text-shadow:
+    0 0 8px rgba(255, 230, 120, 0.95),
+    0 0 22px rgba(255, 180, 80, 0.6),
+    0 0 46px rgba(255, 120, 200, 0.45);
+}
+
+.panel {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+#overlay[data-mode="ready"] #start-screen {
+  display: flex;
+}
+
+#overlay[data-mode="gameOver"] #gameover-screen {
+  display: flex;
+}
+
+#overlay[data-mode="error"] #error-screen {
+  display: flex;
+}
+
+.title {
+  font-size: clamp(34px, 9vh, 64px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin: 0;
+  line-height: 1;
+  color: #f4faff;
+  text-shadow:
+    0 0 10px rgba(70, 230, 255, 0.9),
+    0 0 28px rgba(70, 230, 255, 0.55),
+    0 0 60px rgba(176, 124, 255, 0.45);
+}
+
+.title.danger {
+  color: #fff;
+  text-shadow:
+    0 0 10px rgba(255, 59, 212, 0.9),
+    0 0 30px rgba(255, 59, 212, 0.55),
+    0 0 70px rgba(255, 0, 90, 0.4);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.5em;
+  color: rgba(176, 124, 255, 0.85);
+  text-shadow: 0 0 12px rgba(176, 124, 255, 0.5);
+}
+
+.prompt {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  color: #eaf6ff;
+  text-shadow: 0 0 10px rgba(70, 230, 255, 0.6);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.hint {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(234, 246, 255, 0.55);
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(70, 230, 255, 0.5);
+  box-shadow: 0 0 12px rgba(70, 230, 255, 0.35);
+  color: #eaf6ff;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* Glitch effect for big titles. */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 0 0);
+}
+
+.glitch::before {
+  color: var(--neon-magenta);
+  transform: translate(2px, 0);
+  mix-blend-mode: screen;
+  animation: glitch-x 2.6s infinite steps(2, end);
+}
+
+.glitch::after {
+  color: var(--neon-cyan);
+  transform: translate(-2px, 0);
+  mix-blend-mode: screen;
+  animation: glitch-y 3.4s infinite steps(2, end);
+}
+
+@keyframes glitch-x {
+  0%, 92%, 100% { clip-path: inset(0 0 0 0); transform: translate(2px, 0); }
+  93% { clip-path: inset(10% 0 60% 0); transform: translate(6px, -1px); }
+  96% { clip-path: inset(70% 0 10% 0); transform: translate(-4px, 1px); }
+}
+
+@keyframes glitch-y {
+  0%, 90%, 100% { clip-path: inset(0 0 0 0); transform: translate(-2px, 0); }
+  91% { clip-path: inset(40% 0 30% 0); transform: translate(-6px, 1px); }
+  95% { clip-path: inset(20% 0 50% 0); transform: translate(4px, -1px); }
+}
