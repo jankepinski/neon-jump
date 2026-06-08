@@ -5,6 +5,8 @@
 .vscodeignore
 src/**
 **/*.ts
+**/*.glsl
 **/*.map
-tsconfig.json
+tsconfig*.json
+esbuild.js
 node_modules/**
